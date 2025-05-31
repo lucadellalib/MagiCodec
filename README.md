@@ -1,12 +1,13 @@
 # MagiCodec: Simple Masked Gaussian-Injected Audio Codec for High-Fidelity Reconstruction & Generation
 
+[![github](https://img.shields.io/badge/Code-Repo-black?logo=github)](https://github.com/Ereboas/MagiCodec)
 [![arXiv](https://img.shields.io/badge/%F0%9F%93%84%20ArXiv-Paper-<COLOR>.svg)]()
 [![demo](https://img.shields.io/badge/%F0%9F%94%97%20MagiCodec-Demo-blue)]() 
 [![model](https://img.shields.io/badge/%F0%9F%A4%97%20MagiCodec-Models-blueviolet)]()
 
 MagiCodec is a **single-layer**, **streaming** codec model that delivers state-of-the-art audio quality *and* highly model-able discrete tokens. 
 
-This is the code for the MagiCodec neural audio codec presented in the [MagiCodec: Simple **Ma**sked **G**aussian-**I**njected Audio **Codec** for High-Fidelity Reconstruction and Generation]() [abs](). paper.
+This is the code for the MagiCodec neural audio codec presented in the [MagiCodec: Simple **Ma**sked **G**aussian-**I**njected Audio **Codec** for High-Fidelity Reconstruction and Generation]() [[abs]()]. paper.
 
 ## ✨ Key Features
 - **Single‑layer streaming design** – lightweight causal Transformer that drops straight into audio‑native LLMs with minimal latency.
@@ -67,7 +68,7 @@ Pre-trained model checkpoints are available. Please use the following links to d
 
 | Model Name               |    Dataset    |  Sample Rate  | Token Rate 
 |--------------------------|---------------|---------------|------------|
-| [MagiCodec-50Hz-Base]()  |   Librilight  |    16k Hz     |   50 Hz
+| 🤗 [MagiCodec-50Hz-Base](https://huggingface.co/Ereboas/MagiCodec_16k_50hz)  |   Librilight  |    16k Hz     |   50 Hz
 
 
 ### Inference from raw wav
