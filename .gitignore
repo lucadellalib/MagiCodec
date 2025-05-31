@@ -1,0 +1,16 @@
+# Ignore Python bytecode cache directories
+__pycache__
+
+# Ignore log files
+*.log
+
+# Ignore model checkpoint files (common in PyTorch and other ML frameworks)
+*.ckpt
+
+# Ignore PyTorch model files
+*.pt
+
+# Ignore VSCode editor configuration directory
+*.vscode
+
+flash-attention*
