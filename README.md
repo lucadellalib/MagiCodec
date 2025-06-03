@@ -1,13 +1,13 @@
 # MagiCodec: Simple Masked Gaussian-Injected Audio Codec for High-Fidelity Reconstruction & Generation
 
 [![github](https://img.shields.io/badge/Code-Repo-black?logo=github)](https://github.com/Ereboas/MagiCodec)
-[![arXiv](https://img.shields.io/badge/%F0%9F%93%84%20ArXiv-Paper-<COLOR>.svg)]()
+[![arXiv](https://img.shields.io/badge/%F0%9F%93%84%20ArXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2506.00385)
 [![demo](https://img.shields.io/badge/%F0%9F%94%97%20MagiCodec-Demo-blue)]() 
-[![model](https://img.shields.io/badge/%F0%9F%A4%97%20MagiCodec-Models-blueviolet)]()
+[![model](https://img.shields.io/badge/%F0%9F%A4%97%20MagiCodec-Models-blueviolet)](https://huggingface.co/Ereboas/MagiCodec_16k_50hz)
 
 MagiCodec is a **single-layer**, **streaming** codec model that delivers state-of-the-art audio quality *and* highly model-able discrete tokens. 
 
-This is the code for the MagiCodec neural audio codec presented in the [MagiCodec: Simple **Ma**sked **G**aussian-**I**njected Audio **Codec** for High-Fidelity Reconstruction and Generation]() [[abs]()]. paper.
+This is the code for the MagiCodec neural audio codec presented in the paper [MagiCodec: Simple **Ma**sked **G**aussian-**I**njected Audio **Codec** for High-Fidelity Reconstruction and Generation](https://arxiv.org/pdf/2506.00385) [[abs](https://arxiv.org/abs/2506.00385)].
 
 ## ✨ Key Features
 - **Single‑layer streaming design** – lightweight causal Transformer that drops straight into audio‑native LLMs with minimal latency.
@@ -15,7 +15,7 @@ This is the code for the MagiCodec neural audio codec presented in the [MagiCode
 - **Rich acoustic *and* semantic information** – captures fine‑grained detail plus high‑level semantics, achieving top scores in both waveform reconstruction and downstream tasks.
 
 ## 🎧 Samples
-To get a quick sense of our codec’s performance, please check out the [Sample Page]().
+To get a quick sense of our codec’s performance, please check out the [Sample Page](). **Comprehensive benchmarks covering a variety of baselines are available on this page.**
 
 ## 🛠️ Installation
 
@@ -149,13 +149,13 @@ If you find this repo helpful, please cite our work:
 
 ```bibtex
 @misc{song2025magicodec,
-  title   = {MagiCodec: Simple Masked Gaussian-Injected Codec
-             for High-Fidelity Reconstruction and Generation},
-  author  = {Yakun Song and Jiawei Chen and Xiaobin Zhuang and others},
-  year    = {2025},
-  eprint  = {2505.abcdefg},
-  archivePrefix = {arXiv},
-  primaryClass = {cs.AI}
+      title={MagiCodec: Simple Masked Gaussian-Injected Codec for High-Fidelity Reconstruction and Generation}, 
+      author={Yakun Song and Jiawei Chen and Xiaobin Zhuang and Chenpeng Du and Ziyang Ma and Jian Wu and Jian Cong and Dongya Jia and Zhuo Chen and Yuping Wang and Yuxuan Wang and Xie Chen},
+      year={2025},
+      eprint={2506.00385},
+      archivePrefix={arXiv},
+      primaryClass={cs.SD},
+      url={https://arxiv.org/abs/2506.00385}, 
 }
 ```
 
