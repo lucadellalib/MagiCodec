@@ -2,7 +2,7 @@
 
 [![github](https://img.shields.io/badge/Code-Repo-black?logo=github)](https://github.com/Ereboas/MagiCodec)
 [![arXiv](https://img.shields.io/badge/%F0%9F%93%84%20ArXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2506.00385)
-[![demo](https://img.shields.io/badge/%F0%9F%94%97%20MagiCodec-Demo-blue)]() 
+[![demo](https://img.shields.io/badge/%F0%9F%94%97%20MagiCodec-Demo-blue)](https://ereboas.github.io/MagiCodec/) 
 [![model](https://img.shields.io/badge/%F0%9F%A4%97%20MagiCodec-Models-blueviolet)](https://huggingface.co/Ereboas/MagiCodec_16k_50hz)
 
 MagiCodec is a **single-layer**, **streaming** codec model that delivers state-of-the-art audio quality *and* highly model-able discrete tokens. 
@@ -32,7 +32,7 @@ conda create -n MagiCodec python=3.9 -y
 conda activate MagiCodec
 ```
 ### Basic Requirements
-change to your own cuda version.
+Please change `cu121` in the command to match your local CUDA version.
 ```bash
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121
 pip install packaging ninja cmake pybind11 pytorch_lightning transformers
