@@ -1,39 +1,38 @@
 # Copyright (c) 2022, Tri Dao.
 import math
+import warnings
 from functools import partial
 from typing import Optional
 
 import torch
 import torch.nn as nn
 import torch.utils.checkpoint
-from einops import rearrange, repeat
-from pytorch_lightning.utilities.rank_zero import rank_zero_warn
+from einops import rearrange
 
-from components.ops.padding import pad_input, unpad_input
-
-from components.ops.norm import RMSNorm
+from magicodec.components.ops.padding import pad_input, unpad_input
+from magicodec.components.ops.norm import RMSNorm
 
 try:
-    # flash_attn_2_3
-    from components.ops.flash_attn_2_3_interface import (
-        flash_attn_qkvpacked_func as flash_attn_2_3_qkvpacked_func, 
+    # flash_attn_2_8
+    from magicodec.components.ops.flash_attn_2_8_interface import (
+        flash_attn_qkvpacked_func as flash_attn_2_8_qkvpacked_func,
     )
 except Exception as e:
-    rank_zero_warn(
+    warnings.warn(
         f"Failed to import flash attn related modules with error message {e}")
-    flash_attn_2_3_qkvpacked_func = None
-    flash_attn_2_3_varlen_qkvpacked_func = None
+    flash_attn_2_8_qkvpacked_func = None
+    flash_attn_2_8_varlen_qkvpacked_func = None
 
 
 try:
-    from components.ops.fused_dense import FusedDense
+    from magicodec.components.ops.fused_dense import FusedDense
 except Exception as e:
-    rank_zero_warn(
+    warnings.warn(
         f"Failed to import flash attn related modules with error message {e}")
     FusedDense = None
 
 try:
-    from components.ops.rotary import RotaryEmbedding
+    from magicodec.components.ops.rotary import RotaryEmbedding
 except Exception as e:
     rank_zero_warn(
         f"Failed to import flash attn related modules with error message {e}")
@@ -42,13 +41,13 @@ except Exception as e:
 try:
     import ft_attention
 except Exception as e:
-    rank_zero_warn(
+    warnings.warn(
         f"Failed to import flash attn related modules with error message {e}")
     ft_attention = None
 
 
 
-class FlashSelfAttentionV2_3(nn.Module):
+class FlashSelfAttentionV2_8(nn.Module):
     """Implement the scaled dot product attention with softmax.
     Arguments
     ---------
@@ -68,8 +67,8 @@ class FlashSelfAttentionV2_3(nn.Module):
         window_type=0,
     ):
         super().__init__()
-        assert (flash_attn_2_3_qkvpacked_func
-                is not None), "FlashAttention v2.3 is not installed"
+        assert (flash_attn_2_8_qkvpacked_func
+                is not None), "FlashAttention v2.8 is not installed"
         self.causal = causal
         self.softmax_scale = softmax_scale
         self.drop = nn.Dropout(attention_dropout)
@@ -127,7 +126,7 @@ class FlashSelfAttentionV2_3(nn.Module):
         if unpadded:
             raise NotImplementedError
         else:
-            return flash_attn_2_3_qkvpacked_func(
+            return flash_attn_2_8_qkvpacked_func(
                 qkv,
                 self.drop.p if self.training else 0.0,
                 softmax_scale=self.softmax_scale,
@@ -138,7 +137,7 @@ class FlashSelfAttentionV2_3(nn.Module):
             )
 
 
-class FlashCrossAttentionV2_3(nn.Module):
+class FlashCrossAttentionV2_8(nn.Module):
     """Implement the scaled dot product attention with softmax.
     Arguments
     ---------
@@ -216,7 +215,7 @@ class FlashCrossAttentionV2_3(nn.Module):
             assert cu_seqlens_k.dtype == torch.int32
             assert max_seqlen_k is not None
             assert isinstance(max_seqlen, int)
-            return flash_attn_2_3_varlen_kvpacked_func(
+            return flash_attn_2_8_varlen_kvpacked_func(
                 q,
                 kv,
                 cu_seqlens,
@@ -234,7 +233,7 @@ class FlashCrossAttentionV2_3(nn.Module):
             batch_size = q.shape[0]
             # seqlen_k = kv.shape[1]
             assert kv.shape[0] == batch_size and kv.shape[4] == q.shape[3]
-            return flash_attn_2_3_kvpacked_func(
+            return flash_attn_2_8_kvpacked_func(
                 q,
                 kv,
                 self.drop.p if self.training else 0.0,
@@ -450,14 +449,14 @@ def _update_kv_cache(kv, inference_params, layer_idx):
         return kv
 
 
-FLASHATTN_VERSIONS = ["2.3"]
+FLASHATTN_VERSIONS = ["2.8"]
 
 fa_selfattn_cls = {
-    "2.3": FlashSelfAttentionV2_3,
+    "2.8": FlashSelfAttentionV2_8,
 }
 
 fa_crossattn_cls = {
-    "2.3": FlashCrossAttentionV2_3,
+    "2.8": FlashCrossAttentionV2_8,
 }
 
 
@@ -564,7 +563,7 @@ class MHA(nn.Module):
 
         self.window_size = window_size
         self.window_type = window_type
-        if self.version == "2.3" and use_flash_attn:
+        if self.version == "2.8" and use_flash_attn:
             inner_attn_cls_args.update({
                 "window_size": self.window_size,
                 "window_type": self.window_type
@@ -734,9 +733,9 @@ class MHA(nn.Module):
     ):
         if self.use_flash_attn:
             input_args = (qkv, causal, cu_seqlens, max_seqlen)
-            if self.version in ["2", "2.3"]:
+            if self.version in ["2", "2.8"]:
                 input_args += (return_attn_probs, )
-            if self.version in ["2.3"]:
+            if self.version in ["2.8"]:
                 input_args += (use_window_mask, )
         else:
             input_args = (qkv, causal, key_padding_mask)
@@ -765,9 +764,9 @@ class MHA(nn.Module):
                 cu_seqlens_k,
                 max_seqlen_k,
             )
-            if self.version in ["2", "2.3"]:
+            if self.version in ["2", "2.8"]:
                 input_args += (return_attn_probs, )
-            if self.version in ["2.3"]:
+            if self.version in ["2.8"]:
                 input_args += (use_window_mask, )
         else:
             input_args = (q, kv, causal, key_padding_mask)
@@ -825,13 +824,13 @@ class MHA(nn.Module):
                 assert not self.use_flash_attn
 
         if inference_params is not None:
-            if self.version == 2.3 and self.use_flash_attn:
+            if self.version == 2.8 and self.use_flash_attn:
                 # if self.cross_attn:
-                #     raise NotImplementedError("no support crossattn generation in flashattn 2.3 now")
+                #     raise NotImplementedError("no support crossattn generation in flashattn 2.8 now")
                 if not (self.window_type == 0 and self.window_size[0] <= -1
                         and self.window_size[1] <= 0):
                     raise NotImplementedError(
-                        "no support causal or no_causal&no_mask generation in flashattn 2.3 now"
+                        "no support causal or no_causal&no_mask generation in flashattn 2.8 now"
                     )
             assert key_padding_mask is None
             assert cu_seqlens is None and max_seqlen is None

@@ -14,12 +14,9 @@ from torch import Tensor
 from torch.cuda.amp import custom_bwd, custom_fwd
 from torch.distributed import ProcessGroup
 
-from components.ops.activations import gelu_bwd, relu_bwd, sqrelu_bwd, sqrelu_fwd
-from components.utils.distributed import (
+from magicodec.components.utils.distributed import (
     all_gather_raw,
-    all_reduce,
     all_reduce_raw,
-    reduce_scatter,
     reduce_scatter_raw,
 )
 

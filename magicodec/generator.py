@@ -1,12 +1,12 @@
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
 from dataclasses import dataclass, field
 from einops import rearrange
-from roformer import Roformer
-from roformer import ModelArgs as RoformerArgs
+
+from magicodec.roformer import Roformer
+from magicodec.roformer import ModelArgs as RoformerArgs
 
 
 @dataclass
@@ -21,7 +21,7 @@ class ModelArgs:
     window_size: list = field(default_factory=lambda: [32, 0])
     window_type: str = "elemwise"  # elemwise, blockwise
     use_unet_style_skip_connect: bool = False
-    flashattn_version: str = "2.3"
+    flashattn_version: str = "2.8"
 
 
 class VectorQuantize(nn.Module):
@@ -150,7 +150,7 @@ class Generator(nn.Module):
     def __init__(
         self,
         sample_rate: int = 16000,
-        token_hz: int = 75,
+        token_hz: int = 50,
     ):
         super().__init__()
 

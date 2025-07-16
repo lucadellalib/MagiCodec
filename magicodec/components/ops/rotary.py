@@ -6,7 +6,7 @@ import rotary_emb
 import torch
 from einops import rearrange, repeat
 
-from components.ops.triton.rotary import apply_rotary as apply_rotary_triton
+from magicodec.components.ops.triton.rotary import apply_rotary as apply_rotary_triton
 
 
 def rotate_half(x, interleaved=False):

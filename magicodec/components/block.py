@@ -1,22 +1,22 @@
 # Copyright (c) 2022, Tri Dao.
 
-from typing import Literal, Optional
+from typing import Optional
 
 import torch
 import torch.nn as nn
 from torch import Tensor
 
-from components.mha import (
+from magicodec.components.mha import (
     FLASHATTN_VERSIONS,
 )
 
 try:
-    from components.ops.norm import DropoutAddLayerNorm, dropout_add_layer_norm
+    from magicodec.components.ops.norm import DropoutAddLayerNorm, dropout_add_layer_norm
 except ImportError:
     DropoutAddLayerNorm, dropout_add_layer_norm = None, None
 
 try:
-    from components.ops.norm import DropoutAddRMSNorm, RMSNorm, dropout_add_rms_norm
+    from magicodec.components.ops.norm import DropoutAddRMSNorm, RMSNorm, dropout_add_rms_norm
 except ImportError:
     DropoutAddLayerNorm, RMSNorm, dropout_add_rms_norm = None, None, None
 

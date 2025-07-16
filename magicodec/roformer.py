@@ -7,10 +7,10 @@ from dataclasses import dataclass, field
 
 import torch
 from torch import nn
-from torch.cuda.amp import autocast
 from transformers import GPT2Config
 
-from components.gpt import GPTModel, ELEMWISE_WINDOW_MASK
+from magicodec.components.gpt import GPTModel, ELEMWISE_WINDOW_MASK
+
 
 __all__ = ["Roformer"]
 

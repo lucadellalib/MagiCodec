@@ -3,7 +3,7 @@
 import logging
 import math
 from functools import partial
-from typing import Dict, List
+from typing import List
 
 import torch
 import torch.nn as nn
@@ -11,21 +11,23 @@ import torch.nn.functional as F
 import torch.utils.checkpoint
 from transformers import GPT2Config
 
-from components.block import Block
-from components.mha import FLASHATTN_VERSIONS, MHA
-from components.ops.activations import sqrelu_fwd
-from components.mlp import GatedMlp, Mlp
+from magicodec.components.block import Block
+from magicodec.components.mha import FLASHATTN_VERSIONS, MHA
+from magicodec.components.ops.activations import sqrelu_fwd
+from magicodec.components.mlp import GatedMlp, Mlp
 from importlib.metadata import version
+
+
 def get_s3a_version():
     return version("s3a")
 
 try:
-    from components.ops.norm import dropout_add_layer_norm
+    from magicodec.components.ops.norm import dropout_add_layer_norm
 except ImportError:
     dropout_add_layer_norm = None
 
 try:
-    from components.ops.norm import RMSNorm, dropout_add_rms_norm
+    from magicodec.components.ops.norm import RMSNorm, dropout_add_rms_norm
 except ImportError:
     RMSNorm, dropout_add_rms_norm = None, None
 
@@ -77,6 +79,7 @@ def create_mixer_cls(
     use_window_mask = getattr(config, "use_window_mask", False)
     window_size = getattr(config, "window_size", [-1, -1])
     window_type = getattr(config, "window_type", ELEMWISE_WINDOW_MASK)
+    """
     if flashattn_version == "2.3":
         assert (use_flash_attn and process_group
                 is None), "flashattn_2.3 only support use_flash_attn=True and process_group is None"
@@ -103,7 +106,7 @@ def create_mixer_cls(
         assert (
             not use_window_mask
         ), f"only support use_window_mask=True in flashattn_version=2.3 now, but got {flashattn_version}"
-
+    """
     if blocksparse:
         assert (isinstance(blockmask, List) and len(blockmask) == config.num_hidden_layers)
     if not fused_bias_fc:
