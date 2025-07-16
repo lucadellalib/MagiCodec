@@ -1,5 +1,9 @@
 # flash-attn build
+git clone https://github.com/Dao-AILab/flash-attention.git
 cd flash-attention
+git checkout v2.8.1
+git submodule sync --recursive
+git submodule update --init --recursive
 python setup.py install
 
 # ops build
