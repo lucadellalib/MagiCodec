@@ -237,6 +237,31 @@ class Generator(nn.Module):
         
         return x_hat.float(), loss_vq, loss_ze, quantized_indices
 
+    def sig_to_feats(self, x):
+        x = self.pad_audio(x)
+        z_e = self.encoder(x)
+        return z_e
+
+    def sig_to_qfeats(self, x):
+        z_e = self.sig_to_feats(x)
+        z_q = self.quantizer(z_e)[0]
+        return z_q
+
+    def sig_to_toks(self, x):
+        z_e = self.sig_to_feats(x)
+        quantized_indices = self.quantizer(z_e)[-1]
+        return quantized_indices
+
+    def feats_to_sig(self, z_e):
+        x_hat = self.decoder(z_e)
+        return x_hat
+
+    def toks_to_sig(self, quantized_indices):
+        codebook = self.quantizer.codebook_proj(self.quantizer.codebook.weight)
+        z_q = F.embedding(quantized_indices, codebook)
+        x_hat = self.feats_to_sig(z_q)[:, 0]
+        return x_hat
+
     @torch.no_grad()
     def infer(self, x):
         with torch.autocast(
@@ -259,5 +284,24 @@ class Generator(nn.Module):
         x_hat = self.decoder(z_q)
         return x_hat.float(), quantized_indices, z_q
 
+    @classmethod
+    def from_pretrained(cls, repo_id="Ereboas/MagiCodec_16k_50hz", filename="MagiCodec-50Hz-Base.ckpt"):
+        from huggingface_hub import hf_hub_download
+
+        # Download the model file from Hugging Face Hub
+        model_path = hf_hub_download(repo_id=repo_id, filename=filename)
+
+        # Load the model weights and initialize the class
+        state_dict = torch.load(model_path, map_location="cpu")
+        model = Generator()
+        model.load_state_dict(state_dict)
+
+        return model.eval()
+
+
 if __name__ == "__main__":
-    pass
+    codec = Generator.from_pretrained().cuda()
+    x = torch.randn(2, 16000).cuda()
+    toks = codec.sig_to_toks(x)
+    print(codec.toks_to_sig(toks).shape)
+    print(toks.shape)
