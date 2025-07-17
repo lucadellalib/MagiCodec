@@ -256,9 +256,13 @@ class Generator(nn.Module):
         x_hat = self.decoder(z_e)
         return x_hat
 
-    def toks_to_sig(self, quantized_indices):
+    def toks_to_qfeats(self, quantized_indices):
         codebook = self.quantizer.codebook_proj(self.quantizer.codebook.weight)
         z_q = F.embedding(quantized_indices, codebook)
+        return z_q
+
+    def toks_to_sig(self, quantized_indices):
+        z_q = self.toks_to_qfeats(quantized_indices)
         x_hat = self.feats_to_sig(z_q)[:, 0]
         return x_hat
 
